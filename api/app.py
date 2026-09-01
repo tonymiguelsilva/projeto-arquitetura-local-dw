@@ -40,5 +40,52 @@ def listar_clientes():
             "cidade": "Gravatai",
             "estado": "RS",
             "ativo": True
+        },
+	        {
+            "id_cliente": 6,
+            "nome_cliente": "Lucas Pereira",
+            "cidade": "Portao",
+            "estado": "RS",
+            "ativo": True
+        }
+    ]
+
+@app.get("/produtos")
+def listar_produtos():
+    return [
+        {
+            "id_produto": 1,
+            "nome_produto": "Notebook",
+            "categoria": "Eletronicos",
+            "preco": 3500.00,
+            "ativo": True
+        },
+        {
+            "id_produto": 2,
+            "nome_produto": "Monitor",
+            "categoria": "Eletronicos",
+            "preco": 1200.00,
+            "ativo": True
+        },
+        {
+            "id_produto": 3,
+            "nome_produto": "Teclado",
+            "categoria": "Perifericos",
+            "preco": 250.00,
+            "ativo": True
+        },
+        {
+            "id_produto": 4,
+            "nome_produto": "Mouse",
+            "categoria": "Perifericos",
+            "preco": 150.00,
+            "ativo": True
+        },
+        {
+            "id_produto": 5,
+            "nome_produto": "Cadeira",
+            "categoria": "Moveis",
+            "preco": 900.00,
+            "ativo": True
         }
     ]

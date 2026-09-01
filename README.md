@@ -1,6 +1,6 @@
-# Projeto Arquitetura Local DW
+# Arquitetura Local de Data Warehouse
 
-Projeto de Engenharia de Dados desenvolvido para estudar e aplicar uma arquitetura de Data Warehouse local utilizando Docker, Apache Airflow, PostgreSQL, dbt e uma API REST.
+Projeto de Engenharia de Dados desenvolvido para estudar e aplicar uma arquitetura de Data Warehouse em ambiente local, utilizando Docker, Apache Airflow, PostgreSQL, dbt e uma API REST.
 
 ## Arquitetura
 
@@ -14,52 +14,104 @@ PostgreSQL
 dbt
    ↓
 Bronze → Silver → Gold
+   ↓
+Power BI
 ```
+
+O projeto possui ambientes separados de desenvolvimento e produção no dbt.
 
 ## Tecnologias
 
-- Python
-- FastAPI
-- Apache Airflow
-- PostgreSQL
-- dbt
-- Docker
-- Git / GitHub
+* Python
+* FastAPI
+* Apache Airflow
+* PostgreSQL
+* dbt Core
+* Docker
+* DBeaver
+* Power BI
+* Git
 
 ## Pipeline
 
-### 1. Extração
+A DAG `dw_pipeline` realiza a ingestão de clientes, produtos e vendas a partir da API REST e carrega os dados no PostgreSQL.
 
-A DAG `clientes_pipeline` é responsável por:
+Após a ingestão, o Airflow executa o dbt para transformação e validação dos dados.
 
-- Consumir dados da API REST
-- Validar a resposta
-- Conectar ao PostgreSQL
-- Carregar os dados na tabela de origem
-- Utilizar overwrite para a carga de clientes
+```text
+Extração → PostgreSQL → dbt run → dbt test
+```
 
-### 2. Transformação
+A DAG possui retries, tratamento de falhas e notificações por e-mail.
 
-O dbt organiza as transformações em três camadas:
+## Modelagem
 
-**Bronze**
-- `stg_clientes`
+O dbt organiza os modelos em três camadas.
 
-**Silver**
-- `dim_clientes`
+### Bronze
 
-**Gold**
-- `clientes_ativos`
-- `resumo_clientes`
+Dados preparados a partir das fontes:
 
-### 3. Qualidade
+* `stg_clientes`
+* `stg_produtos`
+* `stg_vendas`
 
-O dbt executa testes de qualidade dos dados, incluindo:
+### Silver
 
-- `not_null`
-- `unique`
+Modelagem dos dados para utilização no Data Warehouse:
 
-## Estrutura do projeto
+* `dim_clientes`
+* `dim_produtos`
+* `fato_vendas`
+
+### Gold
+
+Modelos preparados para consumo analítico:
+
+* `clientes_ativos`
+* `produtos_ativos`
+* `resumo_clientes`
+* `resumo_vendas`
+* `vendas_por_cliente`
+* `vendas_por_produto`
+
+## Ambientes
+
+O dbt possui targets separados para desenvolvimento e produção.
+
+```text
+DEV
+dbt_dev_bronze
+dbt_dev_silver
+dbt_dev_gold
+
+PROD
+dbt_prod_bronze
+dbt_prod_silver
+dbt_prod_gold
+```
+
+A pipeline do Airflow executa o ambiente PROD.
+
+## Qualidade dos dados
+
+O projeto possui testes automatizados utilizando dbt, incluindo validações de `not_null` e `unique`.
+
+Atualmente são executados 14 testes de dados no ambiente PROD.
+
+```text
+PASS=14
+WARN=0
+ERROR=0
+```
+
+## Consumo
+
+O PostgreSQL funciona como Data Warehouse central do projeto.
+
+O DBeaver é utilizado para exploração e administração do banco, enquanto o Power BI está conectado à camada `dbt_prod_gold`.
+
+## Estrutura
 
 ```text
 projeto_arquitetura_dw/
@@ -70,7 +122,7 @@ projeto_arquitetura_dw/
 │   └── requirements.txt
 │
 ├── dags/
-│   ├── clientes_pipeline.py
+│   ├── dw_pipeline.py
 │   └── .airflowignore
 │
 ├── dbt/
@@ -88,25 +140,67 @@ projeto_arquitetura_dw/
 └── requirements.txt
 ```
 
+## Como executar e testar
+
+### Pré-requisitos
+
+* Docker Desktop
+* Git
+* Astro CLI
+
+### Inicialização
+
+Clone o repositório e entre na pasta do projeto.
+
+Configure as variáveis de ambiente no arquivo `.env` e inicie o ambiente:
+
+```bash
+astro dev start
+```
+
+O Airflow estará disponível em:
+
+```text
+http://localhost:8080
+```
+
+### Executando o pipeline
+
+No Airflow, execute a DAG:
+
+```text
+dw_pipeline
+```
+
+O fluxo executado é:
+
+```text
+API
+ ↓
+PostgreSQL
+ ↓
+dbt run
+ ↓
+dbt test
+```
+
+Para executar o dbt manualmente:
+
+```bash
+astro dev bash
+
+cd /usr/local/airflow/dbt/projeto_dw
+
+dbt run --target prod
+dbt test --target prod
+```
+
+Os dados transformados podem ser consultados no PostgreSQL através do DBeaver, principalmente no schema:
+
+```text
+dbt_prod_gold
+```
+
 ## Objetivo
 
-O objetivo deste projeto é construir uma arquitetura de dados completa em ambiente local, aplicando conceitos de:
-
-- ingestão de dados
-- orquestração
-- Data Warehouse
-- transformação com dbt
-- modelagem dimensional
-- testes de qualidade
-- containerização
-- versionamento com Git
-
-## Próximas etapas
-
-- [ ] Pipeline incremental de vendas
-- [ ] Modelagem de fatos e dimensões
-- [ ] Modelos incrementais com dbt
-- [ ] Mais testes de qualidade
-- [ ] CI/CD
-- [ ] Migração da arquitetura para cloud
-- [ ] Implementação na GCP
+Aplicar conceitos de Engenharia de Dados em um projeto completo, incluindo ingestão, orquestração, Data Warehouse, modelagem dimensional, transformação com dbt, testes de qualidade, containerização e integração com ferramentas de Analytics.

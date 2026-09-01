@@ -2,7 +2,6 @@ services:
 
   postgres_dw:
     image: postgres:16
-    container_name: projeto_dw_postgres
     restart: unless-stopped
 
     environment:
@@ -26,7 +25,35 @@ services:
     ports:
       - "8000:8000"
 
+    networks:
+      - airflow
+
+  postgres_oltp:
+    image: postgres:16
+    container_name: projeto_oltp_postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: oltp
+      POSTGRES_USER: oltp_user
+      POSTGRES_PASSWORD: oltp_password
+
+    ports:
+      - "5434:5432"
+
+    volumes:
+      - postgres_oltp_data:/var/lib/postgresql/data
+
+    networks:
+      - airflow
+
 volumes:
 
   postgres_dw_data:
-  
+  postgres_oltp_data:
+
+networks:
+
+  airflow:
+    name: projeto-arquitetura-dw_ad7950_airflow
+    external: true

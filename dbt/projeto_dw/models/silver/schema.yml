@@ -20,3 +20,38 @@ models:
         description: "Indica se o cliente está ativo"
         data_tests:
           - not_null
+
+  - name: fato_vendas
+    description: "Fato de vendas"
+
+    columns:
+      - name: id_venda
+        description: "Identificador único da venda"
+        data_tests:
+          - not_null
+          - unique
+
+      - name: id_cliente
+        description: "Identificador do cliente"
+        data_tests:
+          - not_null
+
+      - name: id_produto
+        description: "Identificador do produto"
+        data_tests:
+          - not_null
+
+      - name: data_venda
+        description: "Data da venda"
+        data_tests:
+          - not_null
+
+      - name: quantidade
+        description: "Quantidade de produtos vendidos"
+        data_tests:
+          - not_null
+
+      - name: valor_total
+        description: "Valor total da venda"
+        data_tests:
+          - not_null

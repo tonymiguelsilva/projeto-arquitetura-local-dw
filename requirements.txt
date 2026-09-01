@@ -2,3 +2,4 @@
 dbt-postgres
 fastapi
 uvicorn
+apache-airflow-providers-postgres

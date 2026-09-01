@@ -7,3 +7,5 @@ sources:
 
     tables:
       - name: origem_clientes
+      - name: origem_produtos
+      - name: origem_vendas

@@ -1,4 +1,5 @@
 services:
+
   postgres_dw:
     image: postgres:16
     container_name: projeto_dw_postgres
@@ -24,6 +25,7 @@ services:
   scheduler:
     env_file:
       - .env
+
     volumes:
       - ./dbt:/usr/local/airflow/dbt
 
