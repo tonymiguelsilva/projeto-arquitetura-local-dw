@@ -60,7 +60,7 @@ def extrair_clientes():
     print(f"Clientes extraídos da API: {len(clientes)}")
 
     conn = psycopg2.connect(
-        host="projeto_dw_postgres",
+        host="postgres_dw",
         port=5432,
         user="dw_user",
         password="dw_password",
@@ -116,7 +116,7 @@ def extrair_produtos():
     print(f"Produtos extraídos da API: {len(produtos)}")
 
     conn = psycopg2.connect(
-        host="projeto_dw_postgres",
+        host="postgres_dw",
         port=5432,
         user="dw_user",
         password="dw_password",
@@ -167,7 +167,7 @@ def extrair_vendas():
     )
 
     dw = psycopg2.connect(
-        host="projeto_dw_postgres",
+        host="postgres_dw",
         port=5432,
         user="dw_user",
         password="dw_password",

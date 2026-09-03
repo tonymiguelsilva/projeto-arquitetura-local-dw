@@ -19,3 +19,5 @@ target/
 dbt_packages/
 
 **/.astro/dbt_metadata.json
+
+backup_dw.sql
